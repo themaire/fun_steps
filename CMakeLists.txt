@@ -35,7 +35,24 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(fun_steps fun_steps.c bmi160.c)
+add_executable(fun_steps fun_steps.c bmi160.c led_manager.c)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/generated)
+# Générer le fichier .pio.h à partir de ws2812.pio
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/ws2812.pio")
+    pico_generate_pio_header(fun_steps ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
+else()
+    message(FATAL_ERROR "ws2812.pio not found in ${CMAKE_CURRENT_LIST_DIR}")
+endif()
+
+# Ajouter les sources WS2812
+# Les fichiers sources sont déjà listés dans add_executable, donc cette section est supprimée pour éviter les doublons.
+
+# Ajouter le chemin d'inclusion pour le fichier généré
+target_include_directories(fun_steps PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/generated
+)
 
 pico_set_program_name(fun_steps "fun_steps_c")
 pico_set_program_version(fun_steps "0.1")
@@ -45,16 +62,9 @@ pico_enable_stdio_uart(fun_steps 1)
 pico_enable_stdio_usb(fun_steps 0)
 
 # Add the standard library to the build
-target_link_libraries(fun_steps
-        pico_stdlib)
-
-# Add the standard include files to the build
-target_include_directories(fun_steps PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
-# Add any user requested libraries
-target_link_libraries(fun_steps 
+target_link_libraries(fun_steps PRIVATE
+        pico_stdlib
+        hardware_pio
         hardware_i2c
         )
 

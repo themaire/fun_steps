@@ -1,13 +1,55 @@
 # 📓 Projet : Chaussures Clignotantes avec BMI160 et LEDs RGB
 
-## Objectif
+## Présentation
 
-Créer un module à fixer sur une chaussure pour enfant, intégrant un accéléromètre BMI160 et un anneau de LEDs RGB adressables (Neopixel/WS2812).  
-L’intensité et le type d’animation lumineuse dépendent du « choc » détecté (impact du pas, saut, etc).
+Ce projet consiste à créer un module électronique à fixer sur une chaussure pour enfant (ou de grand enfant). Il utilise un accéléromètre BMI160 et un anneau de LEDs RGB adressables (Neopixel/WS2812).  
+L’objectif est de détecter les mouvements (impact du pas, saut, etc.) et de déclencher des animations lumineuses dynamiques en fonction de l’intensité du choc.
 
 ---
 
-## Concepts clés du BMI160
+## Ce que j’ai accompli
+
+### Fonctionnalités principales
+1. **Lecture des données du BMI160** :  
+   - Communication via I2C.
+   - Calcul de la magnitude des mouvements.
+   - Détection des seuils pour différencier les chocs faibles, moyens et forts.
+
+2. **Pilotage des LEDs WS2812** :  
+   - Utilisation du PIO du Raspberry Pi Pico pour un contrôle précis.
+   - Déclenchement d’animations dynamiques en fonction des chocs détectés.
+
+3. **Structure modulaire du code** :  
+   - Séparation des fonctionnalités dans des fichiers dédiés (`bmi160.c`, `led_manager.c`, etc.).
+   - Utilisation de `CMake` pour une gestion efficace du projet.
+
+---
+
+## Informations techniques
+
+### Matériel utilisé
+1. **Microcontrôleur** : Raspberry Pi Pico  
+   - Basé sur le RP2040 (dual-core ARM Cortex-M0+).
+   - Utilisation du PIO pour piloter les LEDs WS2812.
+2. **Capteur** : Bosch BMI160  
+   - IMU (accéléromètre + gyroscope) avec communication I2C.
+   - Plage d'accélération configurée à ±8g.
+3. **LEDs** : Stick de 8 LEDs WS2812  
+   - LEDs RGB adressables individuellement.
+   - Contrôlées via PIO du Pico.
+
+### Logiciel utilisé
+1. **Langage** : C  
+   - Code structuré en modules (`bmi160.c`, `led_manager.c`, etc.).
+   - Utilisation de `CMake` pour la gestion du projet.
+2. **SDK** : Raspberry Pi Pico SDK  
+   - Fournit les bibliothèques pour le PIO, I2C, et autres fonctionnalités.
+3. **Outils de développement** :  
+   - **VS Code** avec l'extension Raspberry Pi Pico.
+   - **CMake** pour la configuration.
+   - **Ninja** ou `make` pour la compilation.
+
+### Concepts clés du BMI160
 
 - **Communication I2C/SPI** : I2C recommandé (adresse 0x68 ou 0x69 selon AD0).
 - **Initialisation** :  
@@ -23,18 +65,7 @@ L’intensité et le type d’animation lumineuse dépendent du « choc » d
 
 ---
 
-## Pourquoi régler les seuils et la fréquence d’échantillonnage ?
-
-- **Fréquence d’échantillonnage** :  
-  - Haute : mouvements rapides, meilleure réactivité, plus de conso/données.
-  - Basse : mouvements lents, moins de conso, moins de données à gérer.
-- **Seuils** :  
-  - Filtrer le bruit/vibrations.
-  - Déclencher les animations seulement pour des chocs pertinents (ex : > 1.5g).
-
----
-
-## Logique de fonctionnement
+### Logique de fonctionnement
 
 1. **Lecture de l’accélération**
 2. **Calcul de la magnitude** :  
@@ -52,32 +83,7 @@ L’intensité et le type d’animation lumineuse dépendent du « choc » d
 
 ---
 
-## Extrait de pseudo-code
-
-```python
-ax, ay, az = lire_acceleration_bmi160()
-magnitude = sqrt(ax**2 + ay**2 + az**2)
-
-if magnitude > seuil_gros_choc:
-    animation_flash()
-elif magnitude > seuil_moyen_choc:
-    animation_vif()
-elif magnitude > seuil_petit_choc:
-    animation_douce()
-```
-
----
-
-## Librairies utiles
-
-- **Driver BMI160** : Ports MicroPython disponibles sur GitHub (ex : [robert-hh/BMI160-Micropython](https://github.com/robert-hh/BMI160-Micropython)), à adapter pour CircuitPython si besoin.
-- **LEDs RGB** :  
-  - CircuitPython : `adafruit_circuitpython_neopixel`
-  - MicroPython : module `neopixel` intégré
-
----
-
-## Conseils pratiques
+### Idées pratiques
 
 - **Filtrage/détection** :  
   - Ajoute un antirebond logiciel (ex : pas plus d’une animation toutes les 0.2s).
@@ -88,24 +94,9 @@ elif magnitude > seuil_petit_choc:
 
 ---
 
-## Sauvegarde et partage de la conversation
+## Besoins futurs
 
-- **Ce résumé** : à copier/coller dans un dépôt, un gist, ou un document de suivi.
-- **Conversation complète** : sauvegarder régulièrement, car non synchronisée entre mobile et desktop GitHub Copilot.
-
----
-
-## Besoins futurs ?
-
-- Aide pour le code d’initialisation, la lecture des données, ou le mapping animations.
-- Exemples d’animations LED.
-- Conseils pour la conception du boîtier, l’alimentation, etc.
-
----
-
-**N’hésite pas à reprendre contact en repartant de ce résumé !**  
-Tu peux préciser : « Voir mon projet chaussures clignotantes, cf. résumé markdown » pour que je retrouve le contexte.
-
----
-
-Si tu veux un formatage ou un découpage différent, dis-le-moi !
+- Ajouter des animations LED supplémentaires.
+- Optimiser la gestion des seuils pour des mouvements plus complexes.
+- Tester en conditions réelles (montage sur une chaussure).
+- Concevoir un boîtier 3D pour protéger le module.

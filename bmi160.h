@@ -27,4 +27,8 @@ void bmi160_read_accel(i2c_inst_t *i2c, uint8_t addr, float *x, float *y, float 
 #define BMI160_LSB_PER_G_8G    4096.0f
 #define BMI160_LSB_PER_G_16G   2048.0f
 
+// Deux fonctions utilitaires
+float g_to_degrees(float g_value);
+float getMagnitude(float x, float y, float z);
+
 #endif

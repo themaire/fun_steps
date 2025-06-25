@@ -48,3 +48,13 @@ void bmi160_read_accel(i2c_inst_t *i2c, uint8_t addr, float *x, float *y, float 
     *y = decode_accel(raw_y);
     *z = decode_accel(raw_z);
 }
+
+float g_to_degrees(float g_value) {
+    if (g_value > 1.0f) g_value = 1.0f;
+    if (g_value < -1.0f) g_value = -1.0f;
+    return asinf(g_value) * 180.0f / (float)M_PI;
+}
+
+float getMagnitude(float x, float y, float z) {
+    return sqrtf(x * x + y * y + z * z);
+}
