@@ -19,8 +19,6 @@
 #define IS_RGBW false
 #define NUM_PIXELS 16
 
-#define count_of(x) (sizeof(x)/sizeof(*(x)))
-
 #ifdef PICO_DEFAULT_WS2812_PIN
 #define WS2812_PIN PICO_DEFAULT_WS2812_PIN
 #else
@@ -35,9 +33,9 @@
 
 // Définition de pattern_table qui liste des effets de LED disponibles
 const PatternEntry pattern_table[] = {
-    // {pattern_kitt,   "K2000"},
+    {pattern_kitt,   "K2000"},
     {pattern_cop,    "Cop Car"},
-    // {pattern_snakes, "Snakes!"},
+    {pattern_snakes, "Snakes!"},
     // {pattern_random, "Random data"},
     // {pattern_sparkle,"Sparkles"},
     // {pattern_greys,  "Greys"},
@@ -108,6 +106,8 @@ int main() {
                 sleep_ms(10);
                 t += dir;
             }
+            leds_clear(pio, sm, NUM_PIXELS);
+            printf("\n");
         }
 
         sleep_ms(300 / FREQ_HZ);

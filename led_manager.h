@@ -18,6 +18,9 @@ static inline uint32_t urgbw_u32(uint8_t r, uint8_t g, uint8_t b, uint8_t w);
 
 uint32_t rgb_to_u32(uint8_t r, uint8_t g, uint8_t b);
 uint32_t rgbw_to_u32(uint8_t r, uint8_t g, uint8_t b, uint8_t w);
+
+void leds_clear(PIO pio, uint sm, uint len);
+
 void display_pattern(PIO pio, uint sm, uint len, uint t, void (*pattern)(PIO, uint, uint, uint));
 
 // Déclaration du type pattern
