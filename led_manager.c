@@ -1,6 +1,7 @@
 #include "ws2812.pio.h"
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "led_manager.h"
 
@@ -45,6 +46,45 @@ uint32_t rgbw_to_u32(uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
 void display_pattern(PIO pio, uint sm, uint len, uint t, void (*pattern)(PIO, uint, uint, uint)) {
     pattern(pio, sm, len, t);
 }
+
+
+/**
+ * @brief Joue un motif LED en fonction de son nom.
+ *
+ * Cette fonction recherche dans la table des motifs (pattern_table) un motif dont le nom correspond
+ * à celui passé en paramètre. Si le motif est trouvé, il est joué un certain nombre de fois (loops).
+ * Après chaque itération, un délai de 10 ms est appliqué. À la fin, les LEDs sont éteintes.
+ * Si aucun motif correspondant n'est trouvé, un message d'erreur est affiché.
+ *
+ * @param pio   Instance PIO à utiliser pour contrôler les LEDs.
+ * @param sm    Numéro de state machine à utiliser.
+ * @param len   Nombre de LEDs à contrôler.
+ * @param name  Nom du motif à jouer.
+ * @param loops Nombre de répétitions du motif.
+ */
+#include <string.h> // Pour strcmp
+void play_pattern_by_name(PIO pio, uint sm, uint len, const char *name, int loops) {
+    extern const PatternEntry pattern_table[];
+    int found = 0;
+    for (size_t i = 0; pattern_table[i].name != NULL; ++i) {
+        if (strcmp(pattern_table[i].name, name) == 0) {
+            int t = 0;
+            int dir = 1;
+            for (int j = 0; j < loops; ++j) {
+                pattern_table[i].pat(pio, sm, len, t);
+                sleep_ms(10);
+                t += dir;
+            }
+            leds_clear(pio, sm, len);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("Animation '%s' non trouvée\n", name);
+    }
+}
+
 
 void pattern_snakes(PIO pio, uint sm, uint len, uint t) {
     for (uint i = 0; i < len; ++i) {

@@ -36,9 +36,9 @@ const PatternEntry pattern_table[] = {
     {pattern_kitt,   "K2000"},
     {pattern_cop,    "Cop Car"},
     {pattern_snakes, "Snakes!"},
-    // {pattern_random, "Random data"},
-    // {pattern_sparkle,"Sparkles"},
-    // {pattern_greys,  "Greys"},
+    {pattern_random, "Random data"},
+    {pattern_sparkle,"Sparkles"},
+    {pattern_greys,  "Greys"},
 };
 
 int main() {
@@ -77,12 +77,10 @@ int main() {
         bmi160_read_accel(I2C_PORT, BMI160_ADDR, &x, &y, &z);
         
         // float angle_x = g_to_degrees(x);
-        // float angle_y = g_to_degrees(y);
+        float angle_y = g_to_degrees(y);
         // float angle_z = g_to_degrees(z);
         
         // printf("\rX: %.2fg (%.1f°) Y: %.2fg (%.1f°) Z: %.2fg (%.1f°)",
-        //     x, angle_x, y, angle_y, z, angle_z);
-        // printf("\nX: %.2fg (%.1f°) Y: %.2fg (%.1f°) Z: %.2fg (%.1f°)",
         //     x, angle_x, y, angle_y, z, angle_z);
         
         float magnitude = getMagnitude(x, y, z);
@@ -96,17 +94,16 @@ int main() {
         //     printf("\n");
         // }
 
-        // Boucle pour afficher un motif de LED
-        int t = 0; // Compteur de temps pour les motifs
-        int pat = rand() % count_of(pattern_table);
-        int dir = (rand() >> 30) & 1 ? 1 : -1; // Direction aléatoire
-        if (magnitude > 1.2f) {
-            for (int i = 0; i < 200; ++i) {
-                pattern_table[pat].pat(pio, sm, NUM_PIXELS, t);
-                sleep_ms(10);
-                t += dir;
-            }
-            leds_clear(pio, sm, NUM_PIXELS);
+        // Afficher un motif de LEDs
+        if (magnitude > 5.0f) {
+            // Si l'accélération dépasse 1g, on affiche un motif
+            play_pattern_by_name(pio, sm, NUM_PIXELS, "K2000", 60);
+        } else if (magnitude > 2.0f) {
+            // Sinon, on affiche un motif aléatoire
+            play_pattern_by_name(pio, sm, NUM_PIXELS, "Snakes!", 60);
+        } else if (angle_y > 40) {
+            play_pattern_by_name(pio, sm, NUM_PIXELS, "Cop Car", 30);
+        } else {
             printf("\n");
         }
 

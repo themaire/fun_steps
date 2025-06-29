@@ -44,4 +44,6 @@ typedef struct {
 
 extern const PatternEntry pattern_table[];
 
+void play_pattern_by_name(PIO pio, uint sm, uint len, const char *name, int loops);
+
 #endif // LED_MANAGER_H
